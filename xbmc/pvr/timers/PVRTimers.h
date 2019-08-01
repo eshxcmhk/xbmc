@@ -8,25 +8,22 @@
 
 #pragma once
 
+#include "XBDateTime.h"
+#include "pvr/PVRSettings.h"
+#include "pvr/PVRTypes.h"
+#include "threads/Thread.h"
+#include "utils/Observer.h"
+
 #include <map>
 #include <memory>
 #include <queue>
 #include <vector>
 
-#include "XBDateTime.h"
-#include "addons/kodi-addon-dev-kit/include/kodi/xbmc_pvr_types.h"
-#include "threads/Thread.h"
-#include "utils/Observer.h"
-
-#include "pvr/PVRSettings.h"
-#include "pvr/PVRTypes.h"
-#include "pvr/timers/PVRTimerInfoTag.h"
-
-class CFileItem;
-typedef std::shared_ptr<CFileItem> CFileItemPtr;
-
 namespace PVR
 {
+  enum class TimerOperationResult;
+
+  class CPVRTimerInfoTag;
   class CPVRTimersPath;
 
   class CPVRTimersContainer
@@ -241,18 +238,11 @@ namespace PVR
     CPVRTimerInfoTagPtr GetTimerForEpgTag(const CPVREpgInfoTagPtr &epgTag) const;
 
     /*!
-     * Get the timer rule for a given timer tag
+     * @brief Get the timer rule for a given timer tag
      * @param timer The timer to query the timer rule for
      * @return The timer rule, or nullptr if none was found.
      */
     CPVRTimerInfoTagPtr GetTimerRule(const CPVRTimerInfoTagPtr &timer) const;
-
-    /*!
-     * Get the timer rule for a given timer tag
-     * @param item The timer to query the timer rule for
-     * @return The timer rule, or an empty fileitemptr if none was found.
-     */
-    CFileItemPtr GetTimerRule(const CFileItemPtr &item) const;
 
     /*!
      * @brief Update the channel pointers.
@@ -262,7 +252,7 @@ namespace PVR
     void Notify(const Observable &obs, const ObservableMessage msg) override;
 
     /*!
-     * Get a timer tag given it's unique ID
+     * @brief Get a timer tag given it's unique ID
      * @param iTimerId The ID to find
      * @return The tag, or an empty one when not found
      */

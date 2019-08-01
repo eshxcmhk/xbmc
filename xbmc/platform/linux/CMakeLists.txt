@@ -1,4 +1,5 @@
 set(SOURCES OptionalsReg.cpp
+            MemUtils.cpp
             TimeUtils.cpp)
 
 set(HEADERS OptionalsReg.h
@@ -21,15 +22,13 @@ endif()
 
 if(CORE_PLATFORM_NAME_LC STREQUAL rbpi)
   list(APPEND SOURCES RBP.cpp
-                      OMXCore.cpp)
+                      OMXCore.cpp
+                      ScreenshotSurfaceRBP.cpp)
   list(APPEND HEADERS RBP.h
                       DllBCM.h
                       DllOMX.h
-                      OMXCore.h)
-endif()
-
-if(HAVE_SSE4_1)
-  add_subdirectory(sse4)
+                      OMXCore.h
+                      ScreenshotSurfaceRBP.h)
 endif()
 
 core_add_library(linuxsupport)

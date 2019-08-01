@@ -8,22 +8,28 @@
 
 #include "PVRTimers.h"
 
-#include <utility>
-
-#include "FileItem.h"
 #include "ServiceBroker.h"
 #include "addons/PVRClient.h"
-#include "settings/Settings.h"
-#include "threads/SingleLock.h"
-#include "utils/log.h"
-
 #include "pvr/PVRDatabase.h"
 #include "pvr/PVRJobs.h"
 #include "pvr/PVRManager.h"
 #include "pvr/addons/PVRClients.h"
 #include "pvr/channels/PVRChannel.h"
+#include "pvr/epg/Epg.h"
 #include "pvr/epg/EpgContainer.h"
+#include "pvr/epg/EpgInfoTag.h"
+#include "pvr/timers/PVRTimerInfoTag.h"
 #include "pvr/timers/PVRTimerRuleMatcher.h"
+#include "settings/Settings.h"
+#include "threads/SingleLock.h"
+#include "utils/log.h"
+
+#include <algorithm>
+#include <map>
+#include <memory>
+#include <string>
+#include <utility>
+#include <vector>
 
 using namespace PVR;
 
@@ -1214,23 +1220,6 @@ CPVRTimerInfoTagPtr CPVRTimers::GetTimerRule(const CPVRTimerInfoTagPtr &timer) c
     }
   }
   return CPVRTimerInfoTagPtr();
-}
-
-CFileItemPtr CPVRTimers::GetTimerRule(const CFileItemPtr &item) const
-{
-  CPVRTimerInfoTagPtr timer;
-  if (item && item->HasEPGInfoTag())
-    timer = GetTimerForEpgTag(item->GetEPGInfoTag());
-  else if (item && item->HasPVRTimerInfoTag())
-    timer = item->GetPVRTimerInfoTag();
-
-  if (timer)
-  {
-    timer = GetTimerRule(timer);
-    if (timer)
-      return CFileItemPtr(new CFileItem(timer));
-  }
-  return CFileItemPtr();
 }
 
 void CPVRTimers::Notify(const Observable &obs, const ObservableMessage msg)

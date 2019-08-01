@@ -191,7 +191,7 @@ std::string GetHomePath(const std::string& strTarget, std::string strPath)
 }
 #endif
 #if defined(TARGET_DARWIN)
-#if !defined(TARGET_DARWIN_IOS)
+#if !defined(TARGET_DARWIN_EMBEDDED)
 bool IsDirectoryValidRoot(std::string path)
 {
   path += "/system/settings/settings.xml";
@@ -215,7 +215,7 @@ std::string GetHomePath(const std::string& strTarget, std::string strPath)
       for (int n = strlen(given_path) - 1; given_path[n] != '/'; n--)
         given_path[n] = '\0';
 
-#if defined(TARGET_DARWIN_IOS)
+#if defined(TARGET_DARWIN_EMBEDDED)
       strcat(given_path, "/AppData/AppHome/");
 #else
       // Assume local path inside application bundle.
@@ -506,21 +506,6 @@ std::string CUtil::GetHomePath(std::string strTarget)
   auto strPath = CEnvironment::getenv(strTarget);
 
   return ::GetHomePath(strTarget, strPath);
-}
-
-bool CUtil::IsPVR(const std::string& strFile)
-{
-  return StringUtils::StartsWithNoCase(strFile, "pvr:");
-}
-
-bool CUtil::IsLiveTV(const std::string& strFile)
-{
-  return StringUtils::StartsWithNoCase(strFile, "pvr://channels");
-}
-
-bool CUtil::IsTVRecording(const std::string& strFile)
-{
-  return StringUtils::StartsWithNoCase(strFile, "pvr://recording");
 }
 
 bool CUtil::IsPicture(const std::string& strFile)
@@ -1509,7 +1494,7 @@ bool CUtil::SupportsWriteFileOperations(const std::string& strPath)
     return true;
   if (URIUtils::IsSmb(strPath))
     return true;
-  if (CUtil::IsTVRecording(strPath))
+  if (URIUtils::IsPVRRecording(strPath))
     return CPVRDirectory::SupportsWriteFileOperations(strPath);
   if (URIUtils::IsNfs(strPath))
     return true;
@@ -1834,11 +1819,7 @@ std::string CUtil::GetFrameworksPath(bool forPython)
 {
   std::string strFrameworksPath;
 #if defined(TARGET_DARWIN)
-  char     given_path[2*MAXPATHLEN];
-  size_t path_size =2*MAXPATHLEN;
-
-  CDarwinUtils::GetFrameworkPath(forPython, given_path, &path_size);
-  strFrameworksPath = given_path;
+  strFrameworksPath = CDarwinUtils::GetFrameworkPath(forPython);
 #endif
   return strFrameworksPath;
 }
